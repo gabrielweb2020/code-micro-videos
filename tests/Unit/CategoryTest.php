@@ -3,46 +3,55 @@
 namespace Tests\Unit;
 
 use App\Models\Category;
+use App\Models\Genre;
 use App\Models\Traits\Uuid;
+use Tests\TestCase;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use PHPUnit\Framework\TestCase;
+use Illuminate\Foundation\Testing\WithFaker;
+use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Foundation\Testing\DatabaseMigrations;
 
 class CategoryTest extends TestCase
 {
+    use DatabaseMigrations;
 
-    public function testFillableAttribute()
-    {
-        $fillable = ['name', 'description', 'is_active'];
-        $category = new Category();
-        $this->assertEquals($fillable, $category->getFillable());
+    private $category;
+
+    private function setup(): void {
+        parent::setup();
+        $this->category = new Category();
     }
 
     public function testIfUseTraits()
     {
+        Genre::create(['name' => 'test']);
         $traits = [SoftDeletes::class, Uuid::class];
         $categoryTraits = array_keys(class_uses(Category::class));
         $this->assertEquals($traits, $categoryTraits);
     }
 
+    public function testFillableAttribute()
+    {
+        $fillable = ['name', 'description', 'is_active'];
+        $this->assertEquals($fillable, $this->category->getFillable());
+    }
+
     public function testCastsAttribute()
     {
         $casts = ['id' => 'string'];
-        $category = new Category();
-        $this->assertEquals($casts, $category->getCasts());
+        $this->assertEquals($casts, $this->category->getCasts());
     }
 
     public function testDatesAttribute()
     {
         $dates = ['deleted_at', 'created_at', 'updated_at'];
-        $category = new Category();
         foreach($dates as $date){
-            $this->assertContains($date, $category->getDates());
+            $this->assertContains($date, $this->category->getDates());
         }
     }
 
     public function testIncrementing()
     {
-        $category = new Category();
-        $this->assertFalse($category->incrementing);
+        $this->assertFalse($this->category->incrementing);
     }
 }
