@@ -1,30 +1,26 @@
 <?php
 
-namespace Tests\Unit;
+namespace Tests\Unit\Models;
 
 use App\Models\Category;
-use App\Models\Genre;
 use App\Models\Traits\Uuid;
 use Tests\TestCase;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\DatabaseMigrations;
 
 class CategoryTest extends TestCase
 {
-    use DatabaseMigrations;
 
     private $category;
 
-    private function setup(): void {
+    protected function setup(): void {
         parent::setup();
         $this->category = new Category();
     }
 
     public function testIfUseTraits()
     {
-        Genre::create(['name' => 'test']);
         $traits = [SoftDeletes::class, Uuid::class];
         $categoryTraits = array_keys(class_uses(Category::class));
         $this->assertEquals($traits, $categoryTraits);
@@ -38,7 +34,7 @@ class CategoryTest extends TestCase
 
     public function testCastsAttribute()
     {
-        $casts = ['id' => 'string'];
+        $casts = ['id' => 'string', 'is_active' => 'boolean'];
         $this->assertEquals($casts, $this->category->getCasts());
     }
 
