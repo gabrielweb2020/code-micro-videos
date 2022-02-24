@@ -32,7 +32,7 @@ class CategoryTest extends TestCase
         );
     }
 
-    public function testCreate()
+    public function testUpdate()
     {
         $category = Category::create([
             'name' => 'test1'
@@ -66,5 +66,25 @@ class CategoryTest extends TestCase
             'is_active' => true
         ]);
         $this->assertTrue($category->is_active);
+    }
+
+    public function testCreate()
+    {
+        $category = factory(Category::class)->create([
+            'description' => 'test_description',
+            'is_active' => false
+        ])->first();
+
+        $data = [
+            'name' => 'test_name_updated',
+            'description' => 'test_description_updated',
+            'is_active' => true
+        ];
+
+        $category->update($data);
+
+        foreach($data as $key => $value){
+            $this->assertEquals($value, $category->{$key});
+        }
     }
 }
